@@ -1,0 +1,11 @@
+[2026-05-19 13:50:51] [INFO] eBay App Test Runner
+[2026-05-19 13:50:51] [INFO] Test Type: all
+[2026-05-19 13:50:51] [INFO] Log File: logs\test_2026-05-19_13-50-51.log
+[2026-05-19 13:50:51] [INFO] Timestamp: 2026-05-19_13-50-51
+[2026-05-19 13:50:52] [INFO] Python Version: Python 3.10.1
+[2026-05-19 13:50:52] [INFO] Starting: Test Suite via run_tests.py
+[2026-05-19 13:50:52] [INFO] Command: python run_tests.py
+[2026-05-19 13:50:54] [ERROR] Completed: Test Suite via run_tests.py - FAILED (Exit Code: 1)
+[2026-05-19 13:50:54] [INFO] Test Summary
+[2026-05-19 13:50:54] [ERROR] Tests failed. Please check the log files for details.
+[2026-05-19 13:50:54] [INFO] Log files saved to: logs

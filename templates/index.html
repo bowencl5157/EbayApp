@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBay Product Research Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">eBay Product Research Tool</h1>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-white rounded-lg shadow-md p-2 flex space-x-2 flex-wrap justify-center">
+                <button onclick="showTab('search')" id="tab-search" class="tab-btn px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold transition">Search</button>
+                <button onclick="showTab('trending')" id="tab-trending" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Trending</button>
+                <button onclick="showTab('listing-generator')" id="tab-listing-generator" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Listing Generator</button>
+                <button onclick="showTab('price-generator')" id="tab-price-generator" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Price Generator</button>
+                <button onclick="showTab('walmart')" id="tab-walmart" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Walmart</button>
+                <button onclick="showTab('pricing')" id="tab-pricing" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Pricing</button>
+                <button onclick="showTab('seo')" id="tab-seo" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">SEO</button>
+                <button onclick="showTab('product-research')" id="tab-product-research" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Product Research</button>
+                <button onclick="showTab('price-monitoring')" id="tab-price-monitoring" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Price Monitoring</button>
+                <button onclick="showTab('seller-analytics')" id="tab-seller-analytics" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Seller Analytics</button>
+                <button onclick="showTab('marketplace')" id="tab-marketplace" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Marketplace</button>
+                <button onclick="showTab('repricing')" id="tab-repricing" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Repricing</button>
+                <button onclick="showTab('account')" id="tab-account" class="tab-btn px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-semibold transition">Account</button>
+            </div>
+        </div>
+
+        <!-- Search Tab -->
+        <div id="search-tab" class="tab-content">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4">
+                    <input type="text" id="search-query" placeholder="Search for products..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="searchProducts()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold">Search</button>
+                </div>
+                <div class="mt-4 flex gap-4">
+                    <select id="search-sort" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="price">Sort by Price</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="best_match">Best Match</option>
+                    </select>
+                    <select id="search-limit" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="10">10 Results</option>
+                        <option value="20" selected>20 Results</option>
+                        <option value="50">50 Results</option>
+                    </select>
+                </div>
+            </div>
+            <div id="search-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Trending Tab -->
+        <div id="trending-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 items-center">
+                    <label class="font-semibold text-gray-700">Category ID (optional):</label>
+                    <input type="text" id="trending-category" placeholder="e.g., 293 (Electronics)" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="getTrending()" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-semibold">Get Trending</button>
+                </div>
+            </div>
+            <div id="trending-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Pricing Tab -->
+        <div id="pricing-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="pricing-query" placeholder="Enter product category for pricing analysis..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="getPricing()" class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition font-semibold">Analyze Pricing</button>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="include-ebay-pricing" checked class="mr-2">
+                        Include eBay
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="include-walmart-pricing" class="mr-2">
+                        Include Walmart
+                    </label>
+                </div>
+            </div>
+            <div id="pricing-results"></div>
+        </div>
+
+        <!-- SEO Keywords Tab -->
+        <div id="seo-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="seo-query" placeholder="Enter item or category for keyword analysis..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <button onclick="getSEOKeywords()" class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-semibold">Analyze Keywords</button>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="include-ebay-seo" checked class="mr-2">
+                        Include eBay
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="include-walmart-seo" class="mr-2">
+                        Include Walmart
+                    </label>
+                </div>
+            </div>
+            <div id="seo-results"></div>
+        </div>
+
+        <!-- Product Research Tab -->
+        <div id="product-research-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="product-research-query" placeholder="Enter product for research..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button onclick="getProductResearch()" class="px-6 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition font-semibold">Research Product</button>
+                </div>
+                <div class="flex gap-4">
+                    <input type="text" id="product-research-category" placeholder="Category ID (optional)" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="include-price-history" checked class="mr-2">
+                        Include Price History
+                    </label>
+                </div>
+            </div>
+            <div id="product-research-results"></div>
+        </div>
+
+        <!-- Price Monitoring Tab -->
+        <div id="price-monitoring-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="price-monitoring-query" placeholder="Enter product for price monitoring..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <button onclick="getPriceMonitoring()" class="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition font-semibold">Monitor Prices</button>
+                </div>
+                <div class="flex gap-4">
+                    <input type="text" id="price-monitoring-category" placeholder="Category ID (optional)" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <input type="number" id="price-monitoring-days" placeholder="Days back (default: 30)" value="30" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+            </div>
+            <div id="price-monitoring-results"></div>
+        </div>
+
+        <!-- Seller Analytics Tab -->
+        <div id="seller-analytics-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4">
+                    <input type="text" id="seller-analytics-username" placeholder="Seller username (optional)" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <button onclick="getSellerAnalytics()" class="px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition font-semibold">Get Analytics</button>
+                </div>
+            </div>
+            <div id="seller-analytics-results"></div>
+        </div>
+
+        <!-- Marketplace Research Tab -->
+        <div id="marketplace-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="marketplace-category" placeholder="Enter category ID for research..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    <button onclick="getMarketplaceResearch()" class="px-6 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition font-semibold">Research Category</button>
+                </div>
+                <div class="flex gap-4">
+                    <input type="number" id="marketplace-days" placeholder="Days back (default: 30)" value="30" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                </div>
+            </div>
+            <div id="marketplace-results"></div>
+        </div>
+
+        <!-- Repricing Tab -->
+        <div id="repricing-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="repricing-query" placeholder="Enter product for repricing analysis..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <button onclick="getRepricingAnalysis()" class="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition font-semibold">Analyze Pricing</button>
+                </div>
+                <div class="flex gap-4">
+                    <input type="text" id="repricing-sku" placeholder="Your SKU (optional)" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div id="repricing-results"></div>
+        </div>
+
+        <!-- Walmart Tab -->
+        <div id="walmart-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Walmart Product Search</h2>
+                <p class="text-gray-600 mb-4">Search Walmart products for price comparison and research.</p>
+                
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="walmart-query" placeholder="Enter product to search..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="walmart-category" placeholder="Category (optional)" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="searchWalmart()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold">Search</button>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="getWalmartDeals()" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-semibold">Get Deals</button>
+                </div>
+            </div>
+            
+            <div id="walmart-results" class="bg-white rounded-lg shadow-md p-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Walmart Results</h3>
+                <div id="walmart-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- Price Generator Tab -->
+        <div id="price-generator-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">eBay Price Generator</h2>
+                <p class="text-gray-600 mb-4">Calculate the sell price needed to achieve your desired net profit after eBay fees.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Desired Net Amount ($)</label>
+                        <input type="number" id="desired-net" step="0.01" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 50.00">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Item Cost ($)</label>
+                        <input type="number" id="item-cost" step="0.01" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 20.00">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Shipping Cost ($)</label>
+                        <input type="number" id="shipping-cost" step="0.01" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 5.00">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Other Expenses ($)</label>
+                        <input type="number" id="other-expenses" step="0.01" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 2.00">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Final Value Fee (%)</label>
+                        <input type="number" id="fvf-rate" step="0.1" min="0" max="30" value="13" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Processing Fee (%)</label>
+                        <input type="number" id="payment-rate" step="0.1" min="0" max="10" value="2.9" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Fixed Fee ($)</label>
+                        <input type="number" id="fixed-fee" step="0.01" min="0" value="0.30" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Listing Fee ($)</label>
+                        <input type="number" id="listing-fee" step="0.01" min="0" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                
+                <button onclick="calculatePrice()" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-semibold">Calculate Price</button>
+            </div>
+            
+            <div id="price-results" class="bg-white rounded-lg shadow-md p-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Recommended Pricing</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <p class="text-sm font-semibold text-gray-700 mb-1">Recommended Sell Price</p>
+                        <p id="recommended-price" class="text-3xl font-bold text-green-600">$0.00</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-sm font-semibold text-gray-700 mb-1">Total Fees</p>
+                        <p id="total-fees" class="text-3xl font-bold text-blue-600">$0.00</p>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h4 class="font-semibold text-gray-800 mb-3">Fee Breakdown</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Final Value Fee:</span>
+                            <span id="fvf-amount" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Payment Processing Fee:</span>
+                            <span id="payment-amount" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Fixed Fee:</span>
+                            <span id="fixed-fee-amount" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Listing Fee:</span>
+                            <span id="listing-fee-amount" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2 mt-2">
+                            <span class="text-gray-600">Total Expenses:</span>
+                            <span id="total-expenses" class="font-semibold">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4 mt-4">
+                    <h4 class="font-semibold text-gray-800 mb-3">Profit Summary</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Gross Revenue:</span>
+                            <span id="gross-revenue" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Costs (Fees + Expenses):</span>
+                            <span id="total-costs" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between bg-green-50 p-2 rounded-lg">
+                            <span class="text-gray-800 font-semibold">Net Profit:</span>
+                            <span id="net-profit" class="font-bold text-green-600">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Profit Margin:</span>
+                            <span id="profit-margin" class="font-semibold">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listing Generator Tab -->
+        <div id="listing-generator-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">eBay Listing Generator</h2>
+                <p class="text-gray-600 mb-4">Generate optimized eBay listings using eBay API data from similar items.</p>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Product Details</label>
+                    <textarea id="product-details" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your product details: brand, material, size, color, features, etc."></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Category (optional)</label>
+                    <input type="text" id="listing-category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., electronics, clothing, shoes">
+                </div>
+                
+                <button onclick="generateListing()" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-semibold">Generate Listing</button>
+            </div>
+            
+            <div id="listing-results" class="bg-white rounded-lg shadow-md p-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Generated Listing</h3>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Title (max 80 chars)</label>
+                    <input type="text" id="listing-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div id="title-char-count" class="text-sm text-gray-500 mt-1">0/80 characters</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Subtitle (max 55 chars)</label>
+                    <input type="text" id="listing-subtitle" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div id="subtitle-char-count" class="text-sm text-gray-500 mt-1">0/55 characters</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Keywords</label>
+                    <textarea id="listing-keywords" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Item Specifics</label>
+                    <div id="listing-specifics" class="grid grid-cols-2 gap-2"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                    <textarea id="listing-description" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Category Path</label>
+                    <input type="text" id="listing-category-path" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <button onclick="copyListing()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold">Copy All</button>
+            </div>
+        </div>
+
+        <!-- Account Tab -->
+        <div id="account-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex gap-4 items-end mb-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Start Date</label>
+                        <input type="date" id="account-start-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">End Date</label>
+                        <input type="date" id="account-end-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button onclick="getAccountData()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold">Get Account Data</button>
+                </div>
+                <div class="border-t pt-4 mt-4">
+                    <a href="/oauth/authorize" class="inline-block px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-semibold">
+                        Connect eBay Account
+                    </a>
+                    <p class="text-sm text-gray-600 mt-2">Required to access your seller sales data</p>
+                </div>
+            </div>
+            <div id="account-results"></div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                <p class="mt-4 text-center font-semibold">Loading...</p>
+            </div>
+        </div>
+        <div id="listing-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl h-full max-w-6xl mx-auto flex flex-col">
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h3 id="listing-modal-title" class="text-lg font-bold text-gray-800">eBay Listing</h3>
+                    <div class="flex gap-2">
+                        <a id="listing-modal-link" href="#" target="_blank" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Open on eBay</a>
+                        <button onclick="closeListingModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Close</button>
+                    </div>
+                </div>
+                <iframe id="listing-modal-frame" src="about:blank" class="w-full flex-1 border-0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Common words to exclude from keyword analysis
+        const STOP_WORDS = [
+            "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with",
+            "by", "from", "as", "is", "was", "are", "were", "be", "been", "being", "have",
+            "has", "had", "do", "does", "did", "will", "would", "could", "should", "may",
+            "might", "must", "can", "new", "used", "great", "good", "best", "top", "free",
+            "shipping", "fast", "buy", "get", "now", "sale", "deal", "hot", "cheap", "price"
+        ];
+
+        // Walmart affiliate commission rates by category (approximate rates)
+        const WALMART_COMMISSION_RATES = {
+            "Electronics": 0.015,
+            "TV & Video": 0.015,
+            "Computers": 0.015,
+            "Cell Phones": 0.015,
+            "Cameras": 0.015,
+            "Audio": 0.015,
+            "Home & Garden": 0.05,
+            "Furniture": 0.05,
+            "Kitchen": 0.05,
+            "Bedding": 0.05,
+            "Home Decor": 0.05,
+            "Clothing": 0.05,
+            "Men's Clothing": 0.05,
+            "Women's Clothing": 0.05,
+            "Kids' Clothing": 0.05,
+            "Shoes": 0.05,
+            "Jewelry": 0.05,
+            "Accessories": 0.05,
+            "Toys": 0.05,
+            "Baby": 0.05,
+            "Sports & Outdoors": 0.05,
+            "Automotive": 0.05,
+            "Health & Wellness": 0.05,
+            "Beauty": 0.05,
+            "Personal Care": 0.05,
+            "Grocery": 0.025,
+            "Food": 0.025,
+            "Beverages": 0.025,
+            "Pet Supplies": 0.05,
+            "Books": 0.04,
+            "Movies & Music": 0.04,
+            "Office Supplies": 0.04,
+            "default": 0.04
+        };
+
+        function getWalmartCommissionRate(categoryName) {
+            if (!categoryName) return WALMART_COMMISSION_RATES.default;
+            const lowerCategory = categoryName.toLowerCase();
+            for (const [category, rate] of Object.entries(WALMART_COMMISSION_RATES)) {
+                if (category !== "default" && lowerCategory.includes(category.toLowerCase())) {
+                    return rate;
+                }
+            }
+            return WALMART_COMMISSION_RATES.default;
+        }
+
+        function openListingModal(url, title) {
+            if (!url) {
+                alert('No eBay listing URL is available for this item');
+                return;
+            }
+            document.getElementById('listing-modal-title').textContent = title || 'eBay Listing';
+            document.getElementById('listing-modal-link').href = url;
+            document.getElementById('listing-modal-frame').src = url;
+            document.getElementById('listing-modal').classList.remove('hidden');
+        }
+
+        function closeListingModal() {
+            document.getElementById('listing-modal-frame').src = 'about:blank';
+            document.getElementById('listing-modal').classList.add('hidden');
+        }
+
+        function openListingModalFromButton(button) {
+            openListingModal(button.dataset.url, button.dataset.title);
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-blue-500', 'text-white');
+                el.classList.add('text-gray-600');
+            });
+            
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('bg-blue-500', 'text-white');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-600');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        function toggleStoreFeeBreakdown() {
+            const breakdown = document.getElementById('store-fee-breakdown');
+            breakdown.classList.toggle('hidden');
+        }
+
+        function toggleWalmartCommissionBreakdown() {
+            const breakdown = document.getElementById('walmart-commission-breakdown');
+            breakdown.classList.toggle('hidden');
+        }
+
+        async function getAccountData() {
+            const startDate = document.getElementById('account-start-date').value;
+            const endDate = document.getElementById('account-end-date').value;
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch(`/api/account?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
+                const data = await response.json();
+                displayAccountResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting account data');
+            }
+
+            hideLoading();
+        }
+
+        function displayAccountResults(data) {
+            const container = document.getElementById('account-results');
+
+            if (data.error && data.needs_auth) {
+                container.innerHTML = `
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                        <h3 class="text-xl font-bold text-yellow-800 mb-4">eBay Account Authorization Required</h3>
+                        <p class="text-yellow-700 mb-4">${data.error}</p>
+                        <a href="/oauth/authorize" class="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold">
+                            Connect eBay Account
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            if (data.error) {
+                container.innerHTML = `<p class="text-red-600 text-center">${data.error}</p>`;
+                return;
+            }
+
+            const sales = data.sales || [];
+            const totalRevenue = sales.reduce((sum, s) => sum + (s.revenue || 0), 0);
+            const totalFees = sales.reduce((sum, s) => sum + (s.total_fees || 0), 0);
+            const totalProfit = totalRevenue - totalFees;
+
+            const html = `
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Account Summary: ${data.period}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Total Revenue</p>
+                            <p class="text-3xl font-bold text-green-600">$${totalRevenue.toFixed(2)}</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Total Fees</p>
+                            <p class="text-3xl font-bold text-red-600">$${totalFees.toFixed(2)}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Total Profit</p>
+                            <p class="text-3xl font-bold text-blue-600">$${totalProfit.toFixed(2)}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Total Sales</p>
+                            <p class="text-3xl font-bold text-purple-600">${sales.length}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Sales Breakdown</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Date</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Item Title</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Sold Price</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Seller Fee</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Promo Fee</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Tax</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Total Expenses</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sales.map(sale => `
+                                    <tr class="${sale.profit >= 0 ? 'bg-white' : 'bg-red-50'}">
+                                        <td class="border border-gray-300 px-4 py-2">${sale.date || 'N/A'}</td>
+                                        <td class="border border-gray-300 px-4 py-2">${sale.item_title || 'N/A'}</td>
+                                        <td class="border border-gray-300 px-4 py-2">$${(sale.sold_price || 0).toFixed(2)}</td>
+                                        <td class="border border-gray-300 px-4 py-2">$${(sale.seller_fee || 0).toFixed(2)}</td>
+                                        <td class="border border-gray-300 px-4 py-2">$${(sale.promotional_fee || 0).toFixed(2)}</td>
+                                        <td class="border border-gray-300 px-4 py-2">$${(sale.tax || 0).toFixed(2)}</td>
+                                        <td class="border border-gray-300 px-4 py-2">$${(sale.total_fees || 0).toFixed(2)}</td>
+                                        <td class="border border-gray-300 px-4 py-2 font-semibold ${sale.profit >= 0 ? 'text-green-600' : 'text-red-600'}">$${(sale.profit || 0).toFixed(2)}</td>
+                                    </tr>
+                                `).join('') || '<tr><td class="border border-gray-300 px-4 py-2 text-gray-600" colspan="8">No sales data available.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        async function searchProducts() {
+            const query = document.getElementById('search-query').value;
+            const sort = document.getElementById('search-sort').value;
+            const limit = document.getElementById('search-limit').value;
+            
+            if (!query) {
+                alert('Please enter a search query');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`/api/search?query=${encodeURIComponent(query)}&limit=${limit}&sort=${sort}`);
+                const data = await response.json();
+                displaySearchResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error searching products');
+            }
+            
+            hideLoading();
+        }
+
+        function displaySearchResults(data) {
+            const container = document.getElementById('search-results');
+            container.innerHTML = '';
+            
+            const items = data.itemSummaries || [];
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center col-span-3">No results found</p>';
+                return;
+            }
+
+            items.forEach(item => {
+                const price = item.price ? `$${item.price.value}` : 'N/A';
+                const title = item.title || 'No title';
+                const imageUrl = item.image?.imageUrl || 'https://via.placeholder.com/200';
+                const itemUrl = item.itemWebUrl || '#';
+                
+                const card = `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                        <img src="${imageUrl}" alt="${title}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">${title}</h3>
+                            <p class="text-2xl font-bold text-green-600 mb-2">${price}</p>
+                            <a href="${itemUrl}" target="_blank" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">View on eBay</a>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        async function getTrending() {
+            const categoryId = document.getElementById('trending-category').value;
+            showLoading();
+            
+            try {
+                const url = categoryId ? `/api/trending?category_id=${encodeURIComponent(categoryId)}` : '/api/trending';
+                const response = await fetch(url);
+                const data = await response.json();
+                displayTrendingResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error fetching trending items');
+            }
+            
+            hideLoading();
+        }
+
+        function displayTrendingResults(data) {
+            const container = document.getElementById('trending-results');
+            container.innerHTML = '';
+            
+            const items = data.itemSummaries || [];
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 text-center col-span-3">No trending items found</p>';
+                return;
+            }
+
+            items.forEach(item => {
+                const price = item.price ? `$${item.price.value}` : 'N/A';
+                const title = item.title || 'No title';
+                const imageUrl = item.image?.imageUrl || 'https://via.placeholder.com/200';
+                const itemUrl = item.itemWebUrl || '#';
+                
+                const card = `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition border-2 border-green-400">
+                        <div class="bg-green-400 text-white text-center py-1 font-semibold">🔥 Trending</div>
+                        <img src="${imageUrl}" alt="${title}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">${title}</h3>
+                            <p class="text-2xl font-bold text-green-600 mb-2">${price}</p>
+                            <a href="${itemUrl}" target="_blank" class="inline-block px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">View on eBay</a>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        async function getPricing() {
+            const query = document.getElementById('pricing-query').value;
+            const includeEbay = document.getElementById('include-ebay-pricing').checked;
+            const includeWalmart = document.getElementById('include-walmart-pricing').checked;
+            
+            if (!query) {
+                alert('Please enter a product category');
+                return;
+            }
+
+            if (!includeEbay && !includeWalmart) {
+                alert('Please select at least one source (eBay or Walmart)');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const results = {};
+                const requests = [];
+                
+                if (includeEbay) {
+                    requests.push(
+                        fetch(`/api/pricing/${encodeURIComponent(query)}`)
+                            .then(async response => {
+                                const data = await response.json();
+                                results.ebay = response.ok ? data : { error: data.detail || data.error || 'eBay request failed' };
+                            })
+                            .catch(error => {
+                                results.ebay = { error: error.message || 'eBay request failed' };
+                            })
+                    );
+                }
+                
+                if (includeWalmart) {
+                    requests.push(
+                        fetch(`/api/walmart/search?query=${encodeURIComponent(query)}&limit=20`)
+                            .then(async response => {
+                                const data = await response.json();
+                                results.walmart = response.ok ? data : { error: data.detail || data.error || 'Walmart request failed' };
+                            })
+                            .catch(error => {
+                                results.walmart = { error: error.message || 'Walmart request failed' };
+                            })
+                    );
+                }
+                
+                await Promise.all(requests);
+                displayPricingResults(results);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing pricing');
+            }
+            
+            hideLoading();
+        }
+
+        function displayPricingResults(data) {
+            const container = document.getElementById('pricing-results');
+            
+            let html = '';
+            const normalizedData = data.ebay || data.walmart ? data : { ebay: data };
+            
+            // Display eBay results if available
+            if (normalizedData.ebay) {
+                const ebayData = normalizedData.ebay;
+                if (ebayData.error) {
+                    html += `<div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"><p class="text-red-600">eBay: ${ebayData.error}</p></div>`;
+                } else {
+                    const storeFeeBreakdown = ebayData.store_fee_breakdown || [];
+                    const formatPrice = (value) => value !== undefined && value !== null ? Number(value).toFixed(2) : 'N/A';
+                    html += `
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">eBay Pricing Analysis: ${ebayData.query || ''}</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Total Items</p>
+                                    <p class="text-3xl font-bold text-blue-600">${ebayData.total_items || 0}</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Average Price</p>
+                                    <p class="text-3xl font-bold text-green-600">$${formatPrice(ebayData.average_price)}</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Median Price</p>
+                                    <p class="text-3xl font-bold text-purple-600">$${formatPrice(ebayData.median_price)}</p>
+                                </div>
+                                <div class="bg-orange-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Price Range</p>
+                                    <p class="text-xl font-bold text-orange-600">$${ebayData.price_range?.min || 'N/A'} - $${ebayData.price_range?.max || 'N/A'}</p>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Est. Avg eBay Fee <span class="text-xs text-gray-500">(click to view breakdown)</span></p>
+                                    <p class="text-3xl font-bold text-red-600 cursor-pointer hover:opacity-80" onclick="toggleStoreFeeBreakdown()">${ebayData.estimated_ebay_fees?.average_fee_percentage?.toFixed(2) || 'N/A'}%</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">${ebayData.estimated_ebay_fees?.basis || ''}</p>
+                        </div>
+                        <div id="store-fee-breakdown" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Estimated eBay Fee by Store</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Rank</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Store</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Category</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Listings</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Avg Price</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Avg Fee %</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Avg Fee $</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Feedback Score</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Sample Title</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${storeFeeBreakdown.map((store, index) => `
+                                            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                                                <td class="border border-gray-300 px-4 py-2 font-semibold">${store.store}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${store.category_name || 'N/A'}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${store.listing_count}</td>
+                                                <td class="border border-gray-300 px-4 py-2">$${formatPrice(store.avg_price)}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${formatPrice(store.avg_fee_percentage)}%</td>
+                                                <td class="border border-gray-300 px-4 py-2">$${formatPrice(store.avg_fee_amount)}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${store.feedback_score || 0}</td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <button onclick="openListingModalFromButton(this)" data-url="${store.sample_url || ''}" data-title="${store.sample_title || 'eBay Listing'}" class="text-blue-600 hover:text-blue-800 hover:underline text-left">${store.sample_title || 'N/A'}</button>
+                                                </td>
+                                            </tr>
+                                        `).join('') || '<tr><td class="border border-gray-300 px-4 py-2 text-gray-600" colspan="9">No store fee breakdown available.</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${(ebayData.sample_items || []).map(item => {
+                                const price = item.price ? `$${item.price.value}` : 'N/A';
+                                const title = item.title || 'No title';
+                                const imageUrl = item.image?.imageUrl || 'https://via.placeholder.com/200';
+                                return `
+                                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                        <img src="${imageUrl}" alt="${title}" class="w-full h-48 object-cover">
+                                        <div class="p-4">
+                                            <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">${title}</h3>
+                                            <p class="text-xl font-bold text-purple-600">${price}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+            }
+            
+            // Display Walmart results if available
+            if (normalizedData.walmart) {
+                const walmartData = normalizedData.walmart;
+                const items = walmartData.items || walmartData.products || [];
+                
+                if (walmartData.error) {
+                    html += `<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"><p class="text-yellow-700">Walmart: ${walmartData.error}</p></div>`;
+                } else if (items.length === 0) {
+                    html += `<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"><p class="text-yellow-700">Walmart: No results found. eBay results are still shown above if available.</p></div>`;
+                } else {
+                    // Calculate pricing metrics from Walmart items
+                    const prices = items.map(item => {
+                        const price = item.salePrice || item.price || item.msrp || 0;
+                        return typeof price === 'number' ? price : parseFloat(price) || 0;
+                    }).filter(p => p > 0);
+                    
+                    const totalItems = items.length;
+                    const averagePrice = prices.length > 0 ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
+                    const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+                    const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+                    const medianPrice = prices.length > 0 ? {
+                        sorted: [...prices].sort((a, b) => a - b),
+                        mid: Math.floor(prices.length / 2)
+                    } : { sorted: [], mid: 0 };
+                    const median = prices.length > 0 ? (prices.length % 2 !== 0 ? medianPrice.sorted[medianPrice.mid] : (medianPrice.sorted[medianPrice.mid - 1] + medianPrice.sorted[medianPrice.mid]) / 2) : 0;
+                    
+                    // Calculate commission breakdown by category
+                    const categoryBreakdown = {};
+                    items.forEach(item => {
+                        const category = item.categoryName || item.categoryPath || item.category || 'Uncategorized';
+                        const price = item.salePrice || item.price || item.msrp || 0;
+                        const numPrice = typeof price === 'number' ? price : parseFloat(price) || 0;
+                        const commissionRate = getWalmartCommissionRate(category);
+                        const commission = numPrice * commissionRate;
+                        
+                        if (!categoryBreakdown[category]) {
+                            categoryBreakdown[category] = {
+                                category: category,
+                                count: 0,
+                                totalPrice: 0,
+                                avgPrice: 0,
+                                commissionRate: commissionRate,
+                                totalCommission: 0,
+                                avgCommission: 0
+                            };
+                        }
+                        categoryBreakdown[category].count++;
+                        categoryBreakdown[category].totalPrice += numPrice;
+                        categoryBreakdown[category].totalCommission += commission;
+                    });
+                    
+                    // Calculate averages for each category
+                    Object.values(categoryBreakdown).forEach(cat => {
+                        cat.avgPrice = cat.count > 0 ? cat.totalPrice / cat.count : 0;
+                        cat.avgCommission = cat.count > 0 ? cat.totalCommission / cat.count : 0;
+                    });
+                    
+                    // Convert to array and sort by count
+                    const categoryBreakdownArray = Object.values(categoryBreakdown).sort((a, b) => b.count - a.count);
+                    
+                    // Calculate overall average commission rate
+                    const avgCommissionRate = categoryBreakdownArray.length > 0 
+                        ? categoryBreakdownArray.reduce((sum, cat) => sum + (cat.commissionRate * cat.count), 0) / totalItems 
+                        : WALMART_COMMISSION_RATES.default;
+                    
+                    html += `
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Walmart Pricing Analysis</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Total Items</p>
+                                    <p class="text-3xl font-bold text-yellow-600">${totalItems}</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Average Price</p>
+                                    <p class="text-3xl font-bold text-green-600">$${averagePrice.toFixed(2)}</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Median Price</p>
+                                    <p class="text-3xl font-bold text-purple-600">$${median.toFixed(2)}</p>
+                                </div>
+                                <div class="bg-orange-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Price Range</p>
+                                    <p class="text-xl font-bold text-orange-600">$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}</p>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Est. Avg Commission <span class="text-xs text-gray-500">(click to view breakdown)</span></p>
+                                    <p class="text-3xl font-bold text-red-600 cursor-pointer hover:opacity-80" onclick="toggleWalmartCommissionBreakdown()">${(avgCommissionRate * 100).toFixed(2)}%</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">Affiliate commission rates vary by product category. Click the percentage to view category breakdown.</p>
+                        </div>
+                        <div id="walmart-commission-breakdown" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Walmart Affiliate Commission by Category</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Rank</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Category</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Items</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Avg Price</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Commission Rate</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Avg Commission $</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${categoryBreakdownArray.map((cat, index) => `
+                                            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                                                <td class="border border-gray-300 px-4 py-2 font-semibold">${cat.category}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${cat.count}</td>
+                                                <td class="border border-gray-300 px-4 py-2">$${cat.avgPrice.toFixed(2)}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${(cat.commissionRate * 100).toFixed(2)}%</td>
+                                                <td class="border border-gray-300 px-4 py-2">$${cat.avgCommission.toFixed(2)}</td>
+                                            </tr>
+                                        `).join('') || '<tr><td class="border border-gray-300 px-4 py-2 text-gray-600" colspan="6">No category breakdown available.</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${items.slice(0, 9).map(item => {
+                                const price = item.salePrice || item.price || item.msrp || 'N/A';
+                                const title = item.name || item.title || item.productName || 'No title';
+                                const category = item.categoryName || item.categoryPath || item.category || 'N/A';
+                                const imageUrl = item.thumbnailImage || item.mediumImage || item.largeImage || item.imageEntities?.[0]?.largeImage || 'https://via.placeholder.com/200';
+                                const displayPrice = typeof price === 'number' ? `$${price.toFixed(2)}` : price;
+                                const commissionRate = getWalmartCommissionRate(category);
+                                const numPrice = typeof price === 'number' ? price : parseFloat(price) || 0;
+                                const commission = numPrice * commissionRate;
+                                return `
+                                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                        <img src="${imageUrl}" alt="${title}" class="w-full h-48 object-cover">
+                                        <div class="p-4">
+                                            <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">${title}</h3>
+                                            <p class="text-sm text-gray-500 mb-1">${category}</p>
+                                            <p class="text-xl font-bold text-yellow-600 mb-1">${displayPrice}</p>
+                                            <p class="text-sm text-green-600">Commission: $${commission.toFixed(2)} (${(commissionRate * 100).toFixed(2)}%)</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+            }
+            
+            if (!html) {
+                html = '<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"><p class="text-yellow-700">No pricing results found for the selected sources.</p></div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        async function getSEOKeywords() {
+            const query = document.getElementById('seo-query').value;
+            const includeEbay = document.getElementById('include-ebay-seo').checked;
+            const includeWalmart = document.getElementById('include-walmart-seo').checked;
+            
+            if (!query) {
+                alert('Please enter an item or category');
+                return;
+            }
+
+            if (!includeEbay && !includeWalmart) {
+                alert('Please select at least one source (eBay or Walmart)');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const results = {};
+                const requests = [];
+                
+                if (includeEbay) {
+                    requests.push(
+                        fetch(`/api/seo-keywords?query=${encodeURIComponent(query)}&limit=50`)
+                            .then(async response => {
+                                const data = await response.json();
+                                results.ebay = response.ok ? data : { error: data.detail || data.error || 'eBay request failed' };
+                            })
+                            .catch(error => {
+                                results.ebay = { error: error.message || 'eBay request failed' };
+                            })
+                    );
+                }
+                
+                if (includeWalmart) {
+                    requests.push(
+                        fetch(`/api/walmart/search?query=${encodeURIComponent(query)}&limit=20`)
+                            .then(async response => {
+                                const data = await response.json();
+                                results.walmart = response.ok ? data : { error: data.detail || data.error || 'Walmart request failed' };
+                            })
+                            .catch(error => {
+                                results.walmart = { error: error.message || 'Walmart request failed' };
+                            })
+                    );
+                }
+                
+                await Promise.all(requests);
+                displaySEOResults(results);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing keywords');
+            }
+            
+            hideLoading();
+        }
+
+        function displaySEOResults(data) {
+            const container = document.getElementById('seo-results');
+            
+            let html = '';
+            const normalizedData = data.ebay || data.walmart ? data : { ebay: data };
+            
+            // Display eBay results if available
+            if (normalizedData.ebay) {
+                const ebayData = normalizedData.ebay;
+                if (ebayData.error) {
+                    html += `<div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"><p class="text-red-600">eBay: ${ebayData.error}</p></div>`;
+                } else {
+                    const sellerBreakdown = ebayData.seller_breakdown || [];
+                    const formatPrice = (value) => value !== undefined && value !== null ? Number(value).toFixed(2) : 'N/A';
+                    html += `
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">eBay SEO Keyword Analysis</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div class="bg-orange-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Total Listings Analyzed</p>
+                                    <p class="text-3xl font-bold text-orange-600">${ebayData.total_listings_analyzed || 0}</p>
+                                </div>
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Short-tail Keywords</p>
+                                    <p class="text-3xl font-bold text-blue-600">${ebayData.short_tail_keywords?.length || 0}</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Long-tail Keywords</p>
+                                    <p class="text-3xl font-bold text-green-600">${ebayData.long_tail_keywords?.length || 0}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">eBay Short-tail Keywords</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Rank</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Keyword</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Count</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${(ebayData.short_tail_keywords || []).map((kw, index) => `
+                                            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                                                <td class="border border-gray-300 px-4 py-2 font-semibold">${kw.keyword}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${kw.count}</td>
+                                                <td class="border border-gray-300 px-4 py-2"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">${kw.type}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">eBay Long-tail Keywords</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Rank</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Keyword</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Count</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${(ebayData.long_tail_keywords || []).map((kw, index) => `
+                                            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                                                <td class="border border-gray-300 px-4 py-2 font-semibold">${kw.keyword}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${kw.count}</td>
+                                                <td class="border border-gray-300 px-4 py-2"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">${kw.type}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Best Seller Breakdown for "${ebayData.query || ''}"</h3>
+                            <p class="text-sm text-gray-600 mb-4">${ebayData.seller_breakdown_basis || ''}</p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Rank</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Seller</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Current</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">7 Days</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">30 Days</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Avg Price</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Feedback Score</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Sample Title</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sellerBreakdown.map((seller, index) => `
+                                            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                                                <td class="border border-gray-300 px-4 py-2 font-semibold">${seller.seller}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${seller.current_count}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${seller.count_7d}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${seller.count_30d}</td>
+                                                <td class="border border-gray-300 px-4 py-2">$${formatPrice(seller.avg_price)}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${seller.feedback_score}</td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <button onclick="openListingModalFromButton(this)" data-url="${seller.sample_url || ''}" data-title="${seller.sample_title || 'eBay Listing'}" class="text-blue-600 hover:text-blue-800 hover:underline text-left">${seller.sample_title || 'N/A'}</button>
+                                                </td>
+                                            </tr>
+                                        `).join('') || '<tr><td class="border border-gray-300 px-4 py-2 text-gray-600" colspan="8">No seller breakdown available.</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Display Walmart results if available
+            if (normalizedData.walmart) {
+                const walmartData = normalizedData.walmart;
+                const items = walmartData.items || walmartData.products || [];
+                
+                if (walmartData.error) {
+                    html += `<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"><p class="text-yellow-700">Walmart: ${walmartData.error}</p></div>`;
+                } else if (items.length === 0) {
+                    html += `<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"><p class="text-yellow-700">Walmart: No results found. eBay results are still shown above if available.</p></div>`;
+                } else {
+                    // Extract keywords from Walmart product names
+                    const keywords = {};
+                    items.forEach(item => {
+                        const name = item.name || item.title || item.productName || '';
+                        const words = name.toLowerCase().split(/\s+/);
+                        words.forEach(word => {
+                            if (word.length > 2 && !STOP_WORDS.includes(word)) {
+                                keywords[word] = (keywords[word] || 0) + 1;
+                            }
+                        });
+                    });
+                    
+                    const sortedKeywords = Object.entries(keywords)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 20)
+                        .map(([keyword, count]) => ({ keyword, count, type: 'product' }));
+                    
+                    html += `
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Walmart SEO Keyword Analysis</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Products Analyzed</p>
+                                    <p class="text-3xl font-bold text-yellow-600">${items.length}</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <p class="text-gray-600 text-sm">Keywords Extracted</p>
+                                    <p class="text-3xl font-bold text-purple-600">${sortedKeywords.length}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Walmart Keywords</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Rank</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Keyword</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Count</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sortedKeywords.map((kw, index) => `
+                                            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                                                <td class="border border-gray-300 px-4 py-2 font-semibold">${kw.keyword}</td>
+                                                <td class="border border-gray-300 px-4 py-2">${kw.count}</td>
+                                                <td class="border border-gray-300 px-4 py-2"><span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">${kw.type}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            if (!html) {
+                html = '<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"><p class="text-yellow-700">No SEO results found for the selected sources.</p></div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Product Research
+        async function getProductResearch() {
+            const query = document.getElementById('product-research-query').value;
+            const categoryId = document.getElementById('product-research-category').value;
+            const includePriceHistory = document.getElementById('include-price-history').checked;
+            
+            if (!query) {
+                alert('Please enter a product for research');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                let url = `/api/product-research?query=${encodeURIComponent(query)}`;
+                if (categoryId) url += `&category_id=${encodeURIComponent(categoryId)}`;
+                url += `&include_price_history=${includePriceHistory}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                displayProductResearchResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error researching product');
+            }
+            
+            hideLoading();
+        }
+
+        function displayProductResearchResults(data) {
+            const container = document.getElementById('product-research-results');
+            
+            if (data.error) {
+                container.innerHTML = `<p class="text-red-600 text-center">${data.error}</p>`;
+                return;
+            }
+
+            const html = `
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Product Research: ${data.query}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Current Listings</p>
+                            <p class="text-3xl font-bold text-indigo-600">${data.current_listings?.total || 0}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Price History Records</p>
+                            <p class="text-3xl font-bold text-green-600">${data.price_history?.length || 0}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Average Price</p>
+                            <p class="text-3xl font-bold text-blue-600">$${data.analysis?.price_range?.average?.toFixed(2) || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Analysis Summary</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-semibold">Price Range:</p>
+                            <p class="text-gray-600">$${data.analysis?.price_range?.min || 0} - $${data.analysis?.price_range?.max || 0}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Conditions:</p>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                ${Object.entries(data.analysis?.conditions || {}).map(([cond, count]) => 
+                                    `<span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">${cond}: ${count}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Price Monitoring
+        async function getPriceMonitoring() {
+            const query = document.getElementById('price-monitoring-query').value;
+            const categoryId = document.getElementById('price-monitoring-category').value;
+            const days = document.getElementById('price-monitoring-days').value || 30;
+            
+            if (!query) {
+                alert('Please enter a product for price monitoring');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                let url = `/api/price-monitoring?query=${encodeURIComponent(query)}&days_back=${days}`;
+                if (categoryId) url += `&category_id=${encodeURIComponent(categoryId)}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                displayPriceMonitoringResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error monitoring prices');
+            }
+            
+            hideLoading();
+        }
+
+        function displayPriceMonitoringResults(data) {
+            const container = document.getElementById('price-monitoring-results');
+            
+            if (data.error) {
+                container.innerHTML = `<p class="text-red-600 text-center">${data.error}</p>`;
+                return;
+            }
+            
+            const currentPrices = data.current_prices || {};
+            const currentItems = data.current_items || [];
+            const trends = data.trends || {};
+            const formatPrice = (value) => value !== undefined && value !== null ? Number(value).toFixed(2) : 'N/A';
+
+            const html = `
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Price Monitoring: ${data.query}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-teal-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Current Items</p>
+                            <p class="text-3xl font-bold text-teal-600">${currentPrices.count || 0}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Price Trend</p>
+                            <p class="text-2xl font-bold text-green-600">${trends.trend || 'N/A'}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Avg Current Price</p>
+                            <p class="text-3xl font-bold text-blue-600">$${formatPrice(currentPrices.avg_price)}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Historical Records</p>
+                            <p class="text-3xl font-bold text-purple-600">${data.historical_data?.records_analyzed || 0}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Current Prices</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${currentItems.slice(0, 6).map(item => `
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="font-semibold text-gray-800">${item.title || 'N/A'}</p>
+                                <p class="text-xl font-bold text-teal-600">$${item.price?.value || 'N/A'}</p>
+                                <p class="text-sm text-gray-600">${item.condition || 'N/A'}</p>
+                            </div>
+                        `).join('') || '<p class="text-gray-600">No current items found.</p>'}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Seller Analytics
+        async function getSellerAnalytics() {
+            const username = document.getElementById('seller-analytics-username').value;
+            showLoading();
+            
+            try {
+                const url = username ? `/api/seller-analytics?seller_username=${encodeURIComponent(username)}` : '/api/seller-analytics';
+                const response = await fetch(url);
+                const data = await response.json();
+                displaySellerAnalyticsResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting seller analytics');
+            }
+            
+            hideLoading();
+        }
+
+        function displaySellerAnalyticsResults(data) {
+            const container = document.getElementById('seller-analytics-results');
+            
+            if (data.error) {
+                container.innerHTML = `<p class="text-red-600 text-center">${data.error}</p>`;
+                return;
+            }
+
+            const html = `
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Seller Analytics Dashboard</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-pink-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Active Listings</p>
+                            <p class="text-3xl font-bold text-pink-600">${data.current_performance?.active_listings || 0}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Inventory Items</p>
+                            <p class="text-3xl font-bold text-green-600">${data.current_performance?.inventory_count || 0}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Feedback Score</p>
+                            <p class="text-3xl font-bold text-blue-600">${data.current_performance?.feedback_score || 'N/A'}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Feedback %</p>
+                            <p class="text-3xl font-bold text-purple-600">${data.current_performance?.feedback_percentage || 'N/A'}%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Performance Trend</h3>
+                    <p class="text-gray-600">${data.performance_trend?.trend || 'No trend data available'}</p>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Marketplace Research
+        async function getMarketplaceResearch() {
+            const categoryId = document.getElementById('marketplace-category').value;
+            const days = document.getElementById('marketplace-days').value || 30;
+            
+            if (!categoryId) {
+                alert('Please enter a category ID');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`/api/marketplace-research?category_id=${encodeURIComponent(categoryId)}&days_back=${days}`);
+                const data = await response.json();
+                displayMarketplaceResearchResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error researching marketplace');
+            }
+            
+            hideLoading();
+        }
+
+        function displayMarketplaceResearchResults(data) {
+            const container = document.getElementById('marketplace-results');
+            
+            if (data.error) {
+                container.innerHTML = `<p class="text-red-600 text-center">${data.error}</p>`;
+                return;
+            }
+            
+            const popularItems = data.popular_items?.itemSummaries || [];
+            const trendingItems = data.trending_items?.itemSummaries || [];
+            const analysis = data.analysis || {};
+            const totalListings = data.popular_items?.total || popularItems.length;
+            const formatPrice = (value) => value !== undefined && value !== null ? Number(value).toFixed(2) : 'N/A';
+
+            const html = `
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Marketplace Research: ${data.category_id}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-cyan-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Popular Items</p>
+                            <p class="text-3xl font-bold text-cyan-600">${analysis.popular_count || popularItems.length}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Total Listings</p>
+                            <p class="text-3xl font-bold text-green-600">${totalListings}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Overlap</p>
+                            <p class="text-3xl font-bold text-blue-600">${analysis.overlap || 0}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Trending Products</p>
+                            <p class="text-3xl font-bold text-purple-600">${analysis.trending_count || trendingItems.length}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Marketplace Items</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${(trendingItems.length ? trendingItems : popularItems).slice(0, 6).map(item => `
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="font-semibold text-gray-800">${item.title || 'N/A'}</p>
+                                <p class="text-xl font-bold text-cyan-600">$${formatPrice(item.price?.value)}</p>
+                                <p class="text-sm text-gray-600">${item.condition || 'N/A'}</p>
+                            </div>
+                        `).join('') || '<p class="text-gray-600">No marketplace items found.</p>'}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Repricing
+        async function getRepricingAnalysis() {
+            const query = document.getElementById('repricing-query').value;
+            const sku = document.getElementById('repricing-sku').value;
+            
+            if (!query) {
+                alert('Please enter a product for repricing analysis');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                let url = `/api/repricing-analysis?query=${encodeURIComponent(query)}`;
+                if (sku) url += `&own_sku=${encodeURIComponent(sku)}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                displayRepricingResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing repricing');
+            }
+            
+            hideLoading();
+        }
+
+        function displayRepricingResults(data) {
+            const container = document.getElementById('repricing-results');
+            
+            if (data.error) {
+                container.innerHTML = `<p class="text-red-600 text-center">${data.error}</p>`;
+                return;
+            }
+            
+            const stats = data.price_statistics || {};
+            const recommendation = data.recommendation || {};
+            const formatPrice = (value) => value !== undefined && value !== null ? Number(value).toFixed(2) : 'N/A';
+
+            const html = `
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Repricing Analysis: ${data.query}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-amber-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Competitors</p>
+                            <p class="text-3xl font-bold text-amber-600">${data.competitors_analyzed || 0}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Lowest Price</p>
+                            <p class="text-3xl font-bold text-green-600">$${formatPrice(stats.min)}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Highest Price</p>
+                            <p class="text-3xl font-bold text-blue-600">$${formatPrice(stats.max)}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <p class="text-gray-600 text-sm">Average Price</p>
+                            <p class="text-3xl font-bold text-purple-600">$${formatPrice(stats.average)}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Price Statistics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-semibold">Recommended Price:</p>
+                            <p class="text-2xl font-bold text-amber-600">$${formatPrice(recommendation.optimal_price)}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Action:</p>
+                            <p class="text-2xl font-bold text-gray-600">${recommendation.action || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        async function generateListing() {
+            const productDetails = document.getElementById('product-details').value;
+            const category = document.getElementById('listing-category').value;
+            
+            if (!productDetails.trim()) {
+                alert('Please enter product details');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // Convert category name to ID if provided
+                let categoryId = null;
+                if (category) {
+                    const categoryMap = {
+                        "electronics": "293",
+                        "clothing": "11450",
+                        "shoes": "93427",
+                        "home": "11700",
+                        "garden": "625",
+                        "toys": "220",
+                        "sports": "888",
+                        "automotive": "6001",
+                        "books": "267",
+                        "music": "11233",
+                        "movies": "11232",
+                        "video games": "1249",
+                        "jewelry": "281",
+                        "watches": "31387",
+                        "health": "26395",
+                        "beauty": "26395",
+                        "baby": "2984",
+                        "pet": "1281",
+                        "art": "550",
+                        "collectibles": "1",
+                        "antiques": "20081",
+                        "crafts": "14339",
+                        "business": "12576",
+                        "industrial": "12576",
+                        "cameras": "625",
+                        "photo": "625",
+                        "cell phones": "15032",
+                        "phones": "15032",
+                        "computers": "58058",
+                        "laptops": "177",
+                        "tablets": "171485",
+                        "kitchen": "20625",
+                        "furniture": "3197",
+                        "tools": "631",
+                        "hardware": "631"
+                    };
+                    categoryId = categoryMap[category.toLowerCase()] || null;
+                }
+                
+                // Search for similar items to extract keywords
+                const searchQuery = productDetails.split(' ').slice(0, 3).join(' ');
+                const searchUrl = categoryId 
+                    ? `/api/search?query=${encodeURIComponent(searchQuery)}&limit=10`
+                    : `/api/search?query=${encodeURIComponent(searchQuery)}&limit=10`;
+                
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+                
+                // Extract keywords from similar items
+                const keywords = [];
+                if (data.itemSummaries) {
+                    data.itemSummaries.forEach(item => {
+                        if (item.title) {
+                            const words = item.title.split(' ').filter(w => w.length > 3);
+                            keywords.push(...words.slice(0, 3));
+                        }
+                    });
+                }
+                
+                // Generate title from product details
+                const words = productDetails.split(' ').filter(w => w.length > 2);
+                let title = words.slice(0, 8).join(' ');
+                if (title.length > 80) {
+                    title = title.substring(0, 77) + '...';
+                }
+                
+                // Generate subtitle
+                let subtitle = words.slice(8, 14).join(' ');
+                if (subtitle.length > 55) {
+                    subtitle = subtitle.substring(0, 52) + '...';
+                }
+                
+                // Extract item specifics from product details
+                const specifics = {};
+                const detailsLower = productDetails.toLowerCase();
+                if (detailsLower.includes('brand') || detailsLower.includes('made by')) {
+                    specifics['Brand'] = 'N/A';
+                }
+                if (detailsLower.includes('material') || detailsLower.includes('fabric')) {
+                    specifics['Material'] = 'N/A';
+                }
+                if (detailsLower.includes('color') || detailsLower.includes('colour')) {
+                    specifics['Color'] = 'N/A';
+                }
+                if (detailsLower.includes('size')) {
+                    specifics['Size'] = 'N/A';
+                }
+                if (detailsLower.includes('style')) {
+                    specifics['Style'] = 'N/A';
+                }
+                
+                // Generate description
+                const description = `<p><b>Product Highlights:</b></p>
+<ul>
+<li>${productDetails}</li>
+<li>High quality materials</li>
+<li>Great condition</li>
+<li>Fast shipping available</li>
+</ul>
+<p><b>Why Buy From Us:</b></p>
+<ul>
+<li>Trusted seller with excellent feedback</li>
+<li>30-day return policy</li>
+<li>Customer satisfaction guaranteed</li>
+</ul>`;
+                
+                // Populate form fields
+                document.getElementById('listing-title').value = title;
+                document.getElementById('listing-subtitle').value = subtitle;
+                document.getElementById('listing-keywords').value = [...new Set(keywords)].slice(0, 10).join(', ');
+                document.getElementById('listing-description').value = description;
+                document.getElementById('listing-category-path').value = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'General';
+                
+                // Populate item specifics
+                const specificsContainer = document.getElementById('listing-specifics');
+                specificsContainer.innerHTML = '';
+                Object.entries(specifics).forEach(([key, value]) => {
+                    specificsContainer.innerHTML += `
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">${key}</label>
+                            <input type="text" class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="${value}">
+                        </div>
+                    `;
+                });
+                
+                // Update character counts
+                updateCharCount('listing-title', 'title-char-count', 80);
+                updateCharCount('listing-subtitle', 'subtitle-char-count', 55);
+                
+                // Show results
+                document.getElementById('listing-results').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error generating listing. Please try again.');
+            }
+            
+            hideLoading();
+        }
+        
+        function updateCharCount(inputId, countId, max) {
+            const input = document.getElementById(inputId);
+            const countDisplay = document.getElementById(countId);
+            
+            input.addEventListener('input', () => {
+                const length = input.value.length;
+                countDisplay.textContent = `${length}/${max} characters`;
+                countDisplay.style.color = length > max ? 'red' : 'gray';
+            });
+            
+            // Initial count
+            countDisplay.textContent = `${input.value.length}/${max} characters`;
+        }
+        
+        function copyListing() {
+            const title = document.getElementById('listing-title').value;
+            const subtitle = document.getElementById('listing-subtitle').value;
+            const keywords = document.getElementById('listing-keywords').value;
+            const description = document.getElementById('listing-description').value;
+            const categoryPath = document.getElementById('listing-category-path').value;
+            
+            const listingText = `Title: ${title}\nSubtitle: ${subtitle}\nKeywords: ${keywords}\n\nDescription:\n${description}\n\nCategory: ${categoryPath}`;
+            
+            navigator.clipboard.writeText(listingText).then(() => {
+                alert('Listing copied to clipboard!');
+            });
+        }
+
+        function calculatePrice() {
+            const desiredNet = parseFloat(document.getElementById('desired-net').value) || 0;
+            const itemCost = parseFloat(document.getElementById('item-cost').value) || 0;
+            const shippingCost = parseFloat(document.getElementById('shipping-cost').value) || 0;
+            const otherExpenses = parseFloat(document.getElementById('other-expenses').value) || 0;
+            const fvfRate = parseFloat(document.getElementById('fvf-rate').value) / 100 || 0;
+            const paymentRate = parseFloat(document.getElementById('payment-rate').value) / 100 || 0;
+            const fixedFee = parseFloat(document.getElementById('fixed-fee').value) || 0;
+            const listingFee = parseFloat(document.getElementById('listing-fee').value) || 0;
+            
+            // Calculate required sell price using reverse calculation
+            // desiredNet = sellPrice - (itemCost + shipping + other + fees)
+            // fees = sellPrice * (fvfRate + paymentRate) + fixedFee + listingFee
+            // desiredNet = sellPrice - itemCost - shipping - other - sellPrice * (fvfRate + paymentRate) - fixedFee - listingFee
+            // desiredNet + itemCost + shipping + other + fixedFee + listingFee = sellPrice * (1 - fvfRate - paymentRate)
+            // sellPrice = (desiredNet + itemCost + shipping + other + fixedFee + listingFee) / (1 - fvfRate - paymentRate)
+            
+            const totalFixedCosts = itemCost + shippingCost + otherExpenses + fixedFee + listingFee;
+            const totalVariableRate = fvfRate + paymentRate;
+            
+            if (totalVariableRate >= 1) {
+                alert('Error: Total fee rate cannot be 100% or more. Please adjust the fee rates.');
+                return;
+            }
+            
+            const sellPrice = (desiredNet + totalFixedCosts) / (1 - totalVariableRate);
+            
+            // Calculate fees based on sell price
+            const fvfAmount = sellPrice * fvfRate;
+            const paymentAmount = sellPrice * paymentRate;
+            const totalFees = fvfAmount + paymentAmount + fixedFee + listingFee;
+            const totalExpenses = itemCost + shippingCost + otherExpenses;
+            const totalCosts = totalFees + totalExpenses;
+            const grossRevenue = sellPrice;
+            const netProfit = sellPrice - totalCosts;
+            const profitMargin = (netProfit / sellPrice) * 100;
+            
+            // Update display
+            document.getElementById('recommended-price').textContent = `$${sellPrice.toFixed(2)}`;
+            document.getElementById('total-fees').textContent = `$${totalFees.toFixed(2)}`;
+            document.getElementById('fvf-amount').textContent = `$${fvfAmount.toFixed(2)}`;
+            document.getElementById('payment-amount').textContent = `$${paymentAmount.toFixed(2)}`;
+            document.getElementById('fixed-fee-amount').textContent = `$${fixedFee.toFixed(2)}`;
+            document.getElementById('listing-fee-amount').textContent = `$${listingFee.toFixed(2)}`;
+            document.getElementById('total-expenses').textContent = `$${totalExpenses.toFixed(2)}`;
+            document.getElementById('gross-revenue').textContent = `$${grossRevenue.toFixed(2)}`;
+            document.getElementById('total-costs').textContent = `$${totalCosts.toFixed(2)}`;
+            document.getElementById('net-profit').textContent = `$${netProfit.toFixed(2)}`;
+            document.getElementById('profit-margin').textContent = `${profitMargin.toFixed(1)}%`;
+            
+            // Show results
+            document.getElementById('price-results').classList.remove('hidden');
+        }
+
+        async function searchWalmart() {
+            const query = document.getElementById('walmart-query').value;
+            const category = document.getElementById('walmart-category').value;
+            
+            if (!query.trim()) {
+                alert('Please enter a search query');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const url = `/api/walmart/search?query=${encodeURIComponent(query)}&limit=20${category ? `&category=${encodeURIComponent(category)}` : ''}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                displayWalmartResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error searching Walmart. Please try again.');
+            }
+            
+            hideLoading();
+        }
+
+        async function getWalmartDeals() {
+            const category = document.getElementById('walmart-category').value;
+            
+            showLoading();
+            
+            try {
+                const url = `/api/walmart/deals?limit=20${category ? `&category=${encodeURIComponent(category)}` : ''}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                displayWalmartResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting Walmart deals. Please try again.');
+            }
+            
+            hideLoading();
+        }
+
+        function displayWalmartResults(data) {
+            const container = document.getElementById('walmart-items');
+            container.innerHTML = '';
+            
+            const items = data.items || data.products || [];
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-gray-600">No results found.</p>';
+                return;
+            }
+            
+            items.forEach(item => {
+                const name = item.name || item.title || item.productName || 'N/A';
+                const price = item.salePrice || item.price || item.msrp || 'N/A';
+                const imageUrl = item.thumbnailImage || item.image || item.productUrl || '';
+                const itemId = item.itemId || item.id || '';
+                
+                const card = document.createElement('div');
+                card.className = 'border rounded-lg p-4 shadow-sm';
+                card.innerHTML = `
+                    ${imageUrl ? `<img src="${imageUrl}" alt="${name}" class="w-full h-32 object-cover rounded mb-2">` : ''}
+                    <h4 class="font-semibold text-gray-800 mb-1">${name}</h4>
+                    <p class="text-lg font-bold text-green-600 mb-2">${price !== 'N/A' ? `$${price}` : 'Price not available'}</p>
+                    ${itemId ? `<p class="text-sm text-gray-500">ID: ${itemId}</p>` : ''}
+                `;
+                container.appendChild(card);
+            });
+            
+            document.getElementById('walmart-results').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
