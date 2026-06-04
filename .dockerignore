@@ -1,0 +1,16 @@
+.env
+*.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env/
+.git/
+.gitignore
+*.log
+.DS_Store
+node_modules/
+postgres_data/
+*.db
+*.sqlite3
