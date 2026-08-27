@@ -3,7 +3,7 @@
 
 param(
     [string]$OutputPath = ".\EbayApp-mac.zip",
-    [switch]$IncludeEnvTemplate = $true
+    [switch]$IncludeEnvTemplate
 )
 
 Write-Host "=== Building eBay App macOS Distribution Package ===" -ForegroundColor Cyan
@@ -15,7 +15,6 @@ Set-Location $scriptPath
 
 # Items to exclude from zip
 $exclusions = @(
-    '.env',
     '.git',
     '__pycache__',
     '*.pyc',
@@ -34,15 +33,17 @@ $exclusions = @(
     'Untitled*.ipynb',
     'EbayApp-mac.zip',
     'ebay-app-export.zip',
-    'ebay-app.bundle'
+    'ebay-app.bundle',
+    'ebay-listing-generator',
+    'ebay-listing-generator.zip'
 )
 
-Write-Host "Step 1: Verifying .env is excluded..." -ForegroundColor Yellow
-$envFile = Get-ChildItem -Path . -Filter '.env' -Hidden -ErrorAction SilentlyContinue
+Write-Host "Step 1: Checking .env for private export..." -ForegroundColor Yellow
+$envFile = Get-ChildItem -Path . -Filter '.env' -ErrorAction SilentlyContinue
 if ($envFile) {
-    Write-Warning ".env file found in source directory. It will NOT be included in the zip."
+    Write-Warning ".env file found and will be included in private export."
 } else {
-    Write-Host ".env file not found - good." -ForegroundColor Green
+    Write-Warning ".env file not found. Recipient will need to create one from env.example."
 }
 
 Write-Host ""
@@ -163,7 +164,11 @@ if (Test-Path $OutputPath) {
     Write-Host "Package: $OutputPath" -ForegroundColor Green
     Write-Host "Size: $([math]::Round($size, 2)) MB" -ForegroundColor Green
     Write-Host ""
-    Write-Host "Send this zip privately. Do not include .env." -ForegroundColor Yellow
+    if ($envFile) {
+        Write-Warning "This zip includes .env with credentials. Send only through private channels."
+    } else {
+        Write-Host "Send this zip privately. Recipient creates .env from env.example." -ForegroundColor Yellow
+    }
 } else {
     Write-Error "Failed to create zip package"
     exit 1
